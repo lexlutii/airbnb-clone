@@ -40,10 +40,10 @@ DJANGO_APPS = [
 
 ]
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = ["django_countries"]
 
 PROJECT_APPS = [
-    "users.apps.UsersConfig"
+    "users.apps.UsersConfig", "rooms.apps.RoomsConfig", "core.apps.CoreConfig"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS

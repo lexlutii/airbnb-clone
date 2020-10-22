@@ -28,13 +28,19 @@ class User(AbstractUser):
     CURRENCY_RUB = "rub"
     CURRENCY_CHOICES = ((CURRENCY_USD, "USD"), (CURRENCY_RUB, "RUB"))
 
-    avatar = models.ImageField(null=True, blank=True)
+    avatar = models.ImageField(blank=True)
+
     gender = models.CharField(choices=GENDER_CHOICES,
-                              max_length=3, null=True, blank=True)
-    bio = models.TextField(default="", blank=True)
-    birthday = models.DateField(null=True)
+                              max_length=3, blank=True)
+
+    bio = models.TextField(blank=True)
+
+    birthday = models.DateField(null=True, blank=True)
+
     language = models.CharField(
-        choices=GENDER_CHOICES, max_length=2, null=True, blank=True)
+        choices=GENDER_CHOICES, max_length=2, blank=True)
+
     currency = models.CharField(
-        choices=CURRENCY_CHOICES, max_length=3, null=True, blank=True)
+        choices=CURRENCY_CHOICES, max_length=3, blank=True)
+
     superhost = models.BooleanField(default=False)
