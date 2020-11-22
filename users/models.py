@@ -28,7 +28,7 @@ class User(AbstractUser):
     CURRENCY_RUB = "rub"
     CURRENCY_CHOICES = ((CURRENCY_USD, "USD"), (CURRENCY_RUB, "RUB"))
 
-    avatar = models.ImageField(blank=True)
+    avatar = models.ImageField(upload_to="avatars", blank=True)
 
     gender = models.CharField(choices=GENDER_CHOICES,
                               max_length=3, blank=True)

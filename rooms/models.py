@@ -53,7 +53,7 @@ class Photo(core_models.TimeStampedModel):
     """ Photo model definition """
 
     caption = models.CharField(max_length=140)
-    file = models.ImageField()
+    file = models.ImageField(upload_to="room_photos")
     room = models.ForeignKey(
         "Room", related_name="photos", on_delete=models.CASCADE)
 
@@ -95,5 +95,20 @@ class Room(core_models.TimeStampedModel):
     def __str__(self):
         return self.name
 
+    def total_rating(self):
+        reviews = self.reviews.all()
+        all_ratings = []
+        for review in reviews:
+            all_ratings.append(review.rating_average())
+        try:
+            avg = sum(all_ratings)/self.reviews.count()
+            return round(avg, 2)
+        except ZeroDivisionError:
+            return "no reviews"
+
     class Meta:
         verbose_name_plural = "Rooms"
+
+    def save(self, *args, **kwargs):
+        self.city = self.city.capitalize()
+        super().save(*args, **kwargs)  # Call the real save() method

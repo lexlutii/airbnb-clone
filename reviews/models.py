@@ -22,3 +22,12 @@ class Review(core_models.TimeStampedModel):
     class Meta:
         verbose_name = "Review"
         pass
+
+    def rating_average(self):
+        average = (self.accuracy + self.communication +
+                   self.cleanlines + self.location +
+                   self.check_in + self.value)/6
+
+        return round(average, 2)
+
+    rating_average.short_description = "Avg."
