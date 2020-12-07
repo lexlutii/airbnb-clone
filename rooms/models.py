@@ -111,4 +111,6 @@ class Room(core_models.TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.city = self.city.capitalize()
+        if self.price < 0:
+            return
         super().save(*args, **kwargs)  # Call the real save() method
