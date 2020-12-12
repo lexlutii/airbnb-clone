@@ -1,6 +1,6 @@
 import random
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.contrib.admin.utils import flatten
 
 from django_seed import Seed
@@ -47,21 +47,21 @@ class Command(BaseCommand):
         print(created_clean)
         for pk in created_clean:
             room = room_models.Room.objects.get(pk=pk)
-            for i in range(1, random.randint(4, 17)):
+            for _ in range(1, random.randint(4, 17)):
                 room_models.Photo.objects.create(
                     caption=seeder.faker.sentence(),
                     room=room,
                     file=f"room_photos/{random.randint(1,31)}.webp",
                 )
-            for a in all_amenities:
-                if random.randint() % 8 == 0:
-                    room.amenities.add(a)
-            for f in all_facilities:
-                if random.randint() % 3 == 0:
-                    room.facilities.add(f)
-            for r in all_house_rules:
-                if random.randint() % 4 == 0:
-                    room.house_rules.add(r)
+            for amenity in all_amenities:
+                if random.randint(0, 20) % 8 == 0:
+                    room.amenities.add(amenity)
+            for facility in all_facilities:
+                if random.randint(0, 20) % 3 == 0:
+                    room.facilities.add(facility)
+            for rule in all_house_rules:
+                if random.randint(0, 20) % 4 == 0:
+                    room.house_rules.add(rule)
 
         self.stdout.write(
             self.style.SUCCESS(f'{number} rooms created!')

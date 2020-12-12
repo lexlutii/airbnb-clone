@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from rooms import models as room_models
 
 
@@ -20,8 +20,8 @@ class Command(BaseCommand):
             "Gym",
 
         ]
-        for f in facilities:
-            room_models.Facility.objects.create(name=f)
+        for facility in facilities:
+            room_models.Facility.objects.create(name=facility)
 
         self.stdout.write(
             self.style.SUCCESS(f'{len(facilities)} facilities created!')
