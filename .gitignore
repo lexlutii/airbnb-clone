@@ -126,3 +126,12 @@ dmypy.json
 
 # content
 uploads/
+node_modules
+rooms/templates/base.html
+rooms/templates/partials/footer.html
+rooms/templates/partials/header.html
+rooms/templates/rooms/home.html
+rooms/templates/base.html
+rooms/templates/partials/footer.html
+rooms/templates/partials/header.html
+rooms/templates/rooms/home.html
