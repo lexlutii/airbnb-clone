@@ -1,0 +1,20 @@
+version: "3.9"
+   
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=air_bnb_clone
+      - POSTGRES_PASSWORD=g43y57buyg3f2qy
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8080
+    volumes:
+      - .:/code
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db

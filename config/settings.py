@@ -25,6 +25,11 @@ SECRET_KEY = '66lun!vj4(w#0$i^e*$**6!f&(5toa#f7@e55_dp)+b+rv0e_6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEMPLATE_DEBUG = True
+INTERNAL_IPS = (
+    '127.0.0.1',
+    '192.168.1.23',
+)
 
 ALLOWED_HOSTS = []
 
@@ -50,7 +55,8 @@ PROJECT_APPS = [
     "reviews.apps.ReviewsConfig",
     "reservations.apps.ReservationsConfig",
     "lists.apps.ListsConfig",
-    "conversations.apps.ConversationsConfig"
+    "conversations.apps.ConversationsConfig",
+    'template_debug',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
@@ -63,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -90,6 +97,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
+    '_default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'air_bnb_clone',
+        'PASSWORD': 'g43y57buyg3f2qy',
+        'HOST': 'db',
+        'PORT': 5432,
+    },
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -133,17 +148,27 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
+LOGIN_URL = "/users/login/"
+
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "files", "static")]
+
+STATIC_ROOT = "/var/www/static/"
 
 AUTH_USER_MODEL = "users.User"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+MEDIA_ROOT = os.path.join(BASE_DIR, "files", "uploads")
 MEDIA_URL = "/media/"
 
-
+#Email Configuration
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = "587"
 EMAIL_HOST_USER = os.environ.get("MAILGUN_USERNAME") 
 EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
 EMAIL_FROM = os.environ.get("MAILGUN_FROM")
+
+
+#Localisations
+
+LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]

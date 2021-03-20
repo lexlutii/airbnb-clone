@@ -1,16 +1,20 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 from core import models as core_models
+
+from reservations import models as reserv_models
 
 
 class Review(core_models.TimeStampedModel):
     """ Review Model Definition """
     review = models.TextField()
-    accuracy = models.IntegerField()
-    communication = models.IntegerField()
-    cleanlines = models.IntegerField()
-    location = models.IntegerField()
-    check_in = models.IntegerField()
-    value = models.IntegerField()
+    accuracy = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    communication = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    cleanlines = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    location = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    check_in = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    value = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     user = models.ForeignKey(
         "users.User", related_name="reviews", on_delete=models.CASCADE)
     room = models.ForeignKey(
@@ -21,7 +25,22 @@ class Review(core_models.TimeStampedModel):
 
     class Meta:
         verbose_name = "Review"
+        verbose_name_plural = "Reviews"
+        ordering = ('-created',)
+
         pass
+
+    def get_review_authority(self):
+        reservations = reserv_models.Reservation.objects.filter(room=self.room, guest=self.user)
+        if reservations.count() == 0:
+            return 0
+
+        review_authority = 0
+        review_authority += min(reservations.count(), 3)
+        return review_authority
+        #last_reservation = reservations.order_by('-check_out').first()
+        #last_reserv_date = last_reservation.check_out
+
 
     def rating_average(self):
         average = (self.accuracy + self.communication +

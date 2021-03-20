@@ -1,15 +1,19 @@
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView, View
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect, reverse, render
+from django.views.generic import ListView, DetailView, UpdateView, FormView, View, DeleteView
 from django.core.paginator import Paginator
 from django.http import Http404
-
-from django_countries import countries
+from django.contrib.auth.decorators import login_required
+from django.contrib.messages.views import SuccessMessageMixin
 
 from rooms import forms, models as room_models
+from rooms.mixins import RoomOwnerOnlyMixin, PhotoOwnerOnlyMixin, photo_owner_required
+
 
 # Create your views here.
 
-PAGE_SIZE = 10
+PAGE_SIZE = 12
 
 
 class HomeView(ListView):
@@ -28,6 +32,94 @@ class HomeView(ListView):
 class RoomDetail(DetailView):
     """ RoomDetail class definition """
     model = room_models.Room
+    
+
+
+class EditRoomView(RoomOwnerOnlyMixin, UpdateView):
+    model=room_models.Room
+    fields = (
+        "name",               
+        "description", 
+        "country",
+        "city",
+        "address",
+        "price", 
+        "guests", 
+        "beds", 
+        "bedrooms",
+        "baths",
+        "check_in",
+        "check_out",
+        "instant_book",
+        "room_type",
+        "amenities",
+        "facilities",
+        "house_rules",
+    )
+    template_name="rooms/room_edit.html"
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if self.request.user is None or self.request.user.pk != room.host.pk:
+            raise Http404()
+        else:
+            return room
+    pass
+
+
+class DeleteRoomView(RoomOwnerOnlyMixin, SuccessMessageMixin, DeleteView):
+    model = room_models.Room
+    success_message = "Room successfile deleted!"
+    template_name = "rooms/room_delete.html"
+
+    def get_success_url(self):
+        user =  self.request.user
+        return redirect(reverse("users:profile", kwargs={"pk", user.pk}))
+
+
+class RoomPhotosView(RoomOwnerOnlyMixin, DetailView):
+    model = room_models.Room
+    template_name = "rooms/room_photos.html"
+
+
+class AddPhotoView(RoomOwnerOnlyMixin, FormView):
+    model = room_models.Photo
+    fields = ("caption", "file")
+    template_name = "rooms/photo_create.html"
+    form_class = forms.CreatePhotoForm
+
+    def form_valid(self, form):
+        room_pk = self.kwargs["pk"]
+        try:
+            room = room_models.Room.objects.get(pk=room_pk)
+            if self.request.user.pk == room.host.pk:
+                form.save(room)
+                messages.success(self.request, "Photo uploaded!")
+                return redirect(reverse("rooms:photos", kwargs={"pk": room_pk}))
+        except room_models.Room.DoesNotExist:
+            messages.error("Can't access this room")
+            return redirect(reverse("core:home"))
+
+
+
+@login_required
+@photo_owner_required
+def deletePhoto(request, room_pk, photo_pk):
+    room_models.Photo.objects.filter(pk=photo_pk).delete()
+    messages.success(request, "Photo successfuly deleted!")
+    return redirect(reverse("rooms:photos", kwargs={"pk": room_pk}))
+
+
+class EditPhotoView(PhotoOwnerOnlyMixin, SuccessMessageMixin, UpdateView):
+    model = room_models.Photo
+    template_name = "rooms/photo_edit.html"
+    fields = ("caption",)
+    pk_url_kwarg = "photo_pk"
+    success_message = "Photo Updated!"
+
+    def get_success_url(self):
+        room_pk = self.kwargs["room_pk"]
+        return reverse("rooms:photos", kwargs={"pk": room_pk})
 
 
 def room_detail(request, pk):
@@ -206,6 +298,21 @@ def search(request):
         "rooms/room_search.html",
         {"form": form}
     )
+
+
+class CreateRoom(LoginRequiredMixin, FormView):
+    form_class = forms.CreateRoomForm
+    template_name = "rooms/room_create.html"
+
+    def form_valid(self, form):
+        if self.request.session.get("is_hosting"):
+            room_pk = form.save(self.request.user)
+            messages.success(self.request, "Room uploaded! Please add some photos to this room.")
+            return redirect(reverse("rooms:photos", kwargs={"pk": room_pk}))
+        else:
+            messages.warning("Can't upload this room, because you doesn't hosting.")
+            return redirect(reverse("core:home"))
+
 
 
 """

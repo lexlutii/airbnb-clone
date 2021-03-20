@@ -5,7 +5,9 @@ from django.forms import forms
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.html import strip_tags
+from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
+from django.shortcuts import reverse
 
 from django.db import models
 
@@ -21,16 +23,16 @@ class User(AbstractUser):
     GENDER_UNSPECIFIED = "usp"
 
     GENDER_CHOICES = (
-        (GENDER_MALE, "Male"),
-        (GENDER_FEMALE, "Female"),
-        (GENDER_UNSPECIFIED, "Uncpecified")
+        (GENDER_MALE, _("Male")),
+        (GENDER_FEMALE, _("Female")),
+        (GENDER_UNSPECIFIED, _("Uncpecified"))
     )
 
     LANGUAGE_ENGLISH = "en"
     LANGUAGE_RUSSIAN = "ru"
     LANGUIGE_CHOICES = (
-        (LANGUAGE_ENGLISH, "English"),
-        (LANGUAGE_RUSSIAN, "Russian")
+        (LANGUAGE_ENGLISH, _("English")),
+        (LANGUAGE_RUSSIAN, _("Russian"))
     )
 
     CURRENCY_USD = "usd"
@@ -56,10 +58,10 @@ class User(AbstractUser):
 
     avatar = models.ImageField(upload_to="avatars", blank=True)
 
-    gender = models.CharField(choices=GENDER_CHOICES,
+    gender = models.CharField(_("gender"),choices=GENDER_CHOICES,
                               max_length=3, blank=True, default=GENDER_UNSPECIFIED)
 
-    bio = models.TextField(blank=True)
+    bio = models.TextField(_("bio"), blank=True)
 
     birthday = models.DateField(null=True, blank=True)
 
@@ -85,10 +87,13 @@ class User(AbstractUser):
                     break
             html_message = render_to_string("emails/verify_email.html", context={"secret": secret})
             send_mail(
-                "Verify airbnb-clone", 
+                _("Verify airbnb-clone account"), 
                 strip_tags(html_message),
                 settings.EMAIL_FROM,
                 [self.email],
                 fail_silently=True,
                 html_message=html_message
                 )
+
+    def get_absolute_url(self):
+        return reverse('users:profile', kwargs={'pk': self.pk})

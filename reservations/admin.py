@@ -12,3 +12,11 @@ class ReservationAdmin(admin.ModelAdmin):
     list_filter = ("status", "check_in", "check_out")
 
     pass
+
+
+@admin.register(models.BookedDay)
+class BookedDayAdmin(admin.ModelAdmin):
+    """ BookedDay Admin Definition """
+    list_display = ("day", "reservation")
+
+    pass

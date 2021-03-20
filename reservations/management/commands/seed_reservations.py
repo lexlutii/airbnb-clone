@@ -1,4 +1,4 @@
-"""Seed reservarion module"""
+"""Seed reservation module"""
 import random
 from datetime import datetime, timedelta
 
@@ -11,11 +11,11 @@ from rooms import models as room_models
 from users import models as user_models
 from reservations import models as reservation_models
 
-NAME = "reservarion"
+NAME = "reservation"
 
 
 class Command(BaseCommand):
-    """Seed reservarion Command"""
+    """Seed reservation Command"""
     help = f"This command inserts {NAME} in database"
 
     def add_arguments(self, parser):

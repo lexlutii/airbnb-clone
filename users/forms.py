@@ -1,12 +1,18 @@
 from django import forms
 from django.core.checks.messages import Error
 from django.db import models
+from django.forms import widgets
 from . import models as user_models
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput)
+
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={"placeholder": "Email"})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Password"}
+    ))
 
     def clean(self):
         print("clean password")
@@ -26,13 +32,14 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         model = user_models.User
         fields = ["first_name", "last_name", "email"]
+        widgets = {
+            "first_name": forms.TextInput(attrs={"placeholder": "First name"}),
+            "last_name": forms.TextInput(attrs={"placeholder": "Last name"}),
+            "email": forms.EmailInput(attrs={"placeholder": "Email"})
+        }
 
-
-    first_name = forms.CharField(max_length=40)
-    last_name = forms.CharField(max_length=40)
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+    password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Password"}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder":"Confirm Password"}))
     
     """def clean_email(self):
         email = self.cleaned_data.get("email")

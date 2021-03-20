@@ -1,5 +1,7 @@
+from my_calendar import MyCalendar
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 from django_countries.fields import CountryField
 
@@ -118,3 +120,30 @@ class Room(core_models.TimeStampedModel):
         if self.price < 0:
             return
         super().save(*args, **kwargs)  # Call the real save() method
+
+    def get_first_photo(self):
+        if self.photos.count()>0:
+            photo, = self.photos.all()[:1]
+            return photo.file.url
+        else:
+            return None
+
+    def get_next_four_photos(self):
+        photos = self.photos.all()[1:5]
+        urls = [photo.file.url for photo in photos]
+        print(urls)
+        return urls
+
+    def get_absolute_url(self):
+        return reverse('rooms:detail', kwargs={'pk': self.pk})
+
+    def get_calendars(self):
+        this_year = timezone.now().year
+        this_month = timezone.now().month
+        this_calendar = MyCalendar(this_year, this_month)
+        next_year, next_month = this_year, this_month+1
+        if this_month == 12:
+            next_year, next_month = this_year+1, 1
+            
+        next_calendar = MyCalendar(next_year, next_month)
+        return [this_calendar, next_calendar]
