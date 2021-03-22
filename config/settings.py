@@ -15,11 +15,4 @@ import dotenv
 
 from .base_settings import *
 
-print()
-import socket
-print (f"socket.gethostname()={socket.gethostname()}")
-
-print("load production settings")
 from .production_settings import *
-
-print()

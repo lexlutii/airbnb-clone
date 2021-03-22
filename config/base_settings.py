@@ -24,7 +24,7 @@ print(BASE_DIR)
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '66lun!vj4(w#0$i^e*$**6!f&(5toa#f7@e55_dp)+b+rv0e_6'
+SECRET_KEY = os.environ.get("PRODUCTION_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -34,7 +34,7 @@ INTERNAL_IPS = (
     '192.168.1.23',
 )
 
-ALLOWED_HOSTS = ["howtok.ru:8080"]
+ALLOWED_HOSTS = ["127.0.0.1"]
 
 
 # Application definition
