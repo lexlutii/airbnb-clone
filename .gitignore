@@ -127,19 +127,6 @@ dmypy.json
 # content
 uploads/
 node_modules/
-data/db/base/
-data/db/global/
-data/db/pg_logical/
-data/db/pg_multixact/
-data/db/pg_stat/
-data/db/pg_subtrans/
-data/db/pg_wal/
-data/db/pg_xact/
+data/db/
 data/certbot/conf/
 data/certbot/conf/options-ssl-nginx.conf
-data/db/pg_hba.conf
-data/db/pg_ident.conf
-data/db/PG_VERSION
-data/db/postgresql.auto.conf
-data/db/postgresql.conf
-data/db/postmaster.opts
